@@ -17,6 +17,22 @@ def add_contact(name, phone, email):
     session.commit()
 
 
+def add_person_phone(id):
+    phone_number = input("New phone number: ")
+    description = input("Description: ")
+    phone = models.Phone(phone_number=phone_number, description=description, person_id=id)
+    session.add(phone)
+    session.commit()
+
+
+def add_person_email(id):
+    email = input("New email: ")
+    description = input("Description: ")
+    em = models.Email(email=email, description=description, person_id=id)
+    session.add(em)
+    session.commit()
+
+
 def update_contact(id):
     person = session.query(models.Person).filter(models.Person.id == id).first()
 
@@ -36,6 +52,12 @@ def update_contact(id):
         if desc:
             phone.description = desc
 
+    while True:
+        if input("add phone number [y/n]") == 'y':
+            add_person_phone(id)
+        else:
+            break
+
     for email in person.emails:
         em = input(f'email [{email.email}]:')
         if em:
@@ -44,7 +66,13 @@ def update_contact(id):
         if desc:
             email.description = desc
 
-    bd = input(f'Birth date [{person.birth_date.strftime("%d.%m.%y") if isinstance(person.birth_date, datetime) else None }]:')
+    while True:
+        if input("add email [y/n]") == 'y':
+            add_person_email(id)
+        else:
+            break
+
+    bd = input(f'Birth date [{person.birth_date}]:')
     if bd:
         person.birth_date = datetime.strptime(bd, "%d.%m.%y")
 
@@ -63,8 +91,6 @@ def update_contact(id):
              person.description)
 
 
-
-
 def get_contacts():
     contacts = session.query(models.Person).select_from(models.Person).\
         join(models.Phone).join(models.Email).group_by(models.Person.id).all()
@@ -81,8 +107,3 @@ def remove_contact(id):
     session.delete(contact)
     session.commit()
     return True
-
-
-
-
-
