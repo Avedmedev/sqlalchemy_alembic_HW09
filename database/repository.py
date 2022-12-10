@@ -33,6 +33,18 @@ def add_person_email(id):
     session.commit()
 
 
+def remove_phone_number(id):
+    phone = session.query(models.Phone).filter(models.Phone.id == id).first()
+    session.delete(phone)
+    session.commit()
+
+
+def remove_email(id):
+    email = session.query(models.Email).filter(models.Email.id == id).first()
+    session.delete(email)
+    session.commit()
+
+
 def update_contact(id):
     person = session.query(models.Person).filter(models.Person.id == id).first()
 
@@ -45,7 +57,10 @@ def update_contact(id):
         person.last_name = ln
 
     for phone in person.phones:
-        ph = input(f'phone_number [{phone.phone_number}]:')
+        ph = input(f'phone_number [{phone.phone_number}/del]:')
+        if ph == 'del':
+            remove_phone_number(phone.id)
+            continue
         if ph:
             phone.phone_number = ph
         desc = input(f'phone description [{phone.description}]:')
@@ -59,7 +74,10 @@ def update_contact(id):
             break
 
     for email in person.emails:
-        em = input(f'email [{email.email}]:')
+        em = input(f'email [{email.email}/del]:')
+        if em == 'del':
+            remove_email(email.id)
+            continue
         if em:
             email.email = em
         desc = input(f'email description [{email.description}]:')
@@ -91,9 +109,16 @@ def update_contact(id):
              person.description)
 
 
+def get_contact(id):
+    person = session.query(models.Person).filter(models.Person.id == id).first()
+    return (person.id, person.fullname,
+             [(ph.phone_number, ph.description) for ph in person.phones],
+             [(em.email, em.description) for em in person.emails],
+             person.description)
+
+
 def get_contacts():
-    contacts = session.query(models.Person).select_from(models.Person).\
-        join(models.Phone).join(models.Email).group_by(models.Person.id).all()
+    contacts = session.query(models.Person).all()
 
     return [(el.id, el.fullname,
              [(ph.phone_number, ph.description) for ph in el.phones],

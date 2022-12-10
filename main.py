@@ -3,10 +3,11 @@ import argparse
 import bcrypt
 
 from database.db import session
-from database.repository import get_user_by_login, add_contact, update_contact, get_contacts, remove_contact
+from database.repository import get_user_by_login, add_contact, update_contact, get_contacts, remove_contact, \
+    get_contact
 
 parser = argparse.ArgumentParser(description='Personal organizer')
-parser.add_argument('--action', '-a', help='Command: add, update, list, remove', required=True)
+parser.add_argument('--action', '-a', help='Command: add, update, list, remove, get', required=True)
 parser.add_argument('--login')
 parser.add_argument('--id')
 parser.add_argument('--name')
@@ -23,6 +24,7 @@ phone = args.get('phone')
 email = args.get('email')
 
 
+
 def main():
     match action:
         case 'add':
@@ -36,6 +38,9 @@ def main():
                 [print(el) for el in contacts]
             else:
                 print("List is empty")
+        case 'get':
+            person = get_contact(id)
+            print(person)
         case 'remove':
             result = remove_contact(id)
             print(f'Result: {bool(result)}')
