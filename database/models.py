@@ -56,7 +56,7 @@ class Email(Base):
     email = Column('phone_number', String(120), nullable=False)
     description = Column('description', String(120), nullable=True)
     person_id = Column(Integer, ForeignKey('persons.id', ondelete="CASCADE"))
-    person = relationship(Person, cascade='all,delete')
+    person = relationship(Person)
 
 
 @listens_for(Person, "before_insert")
