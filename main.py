@@ -52,7 +52,8 @@ if __name__ == '__main__':
     owner = get_user_by_login(login)
     if owner:
         password = input('Password: ')
-        if bcrypt.checkpw(password.encode('utf-8'), owner.hash):
+        if bcrypt.checkpw(password.encode('utf-8'),
+                          owner.hash if isinstance(owner.hash, bytes) else owner.hash.encode('utf-8')):
             main()
             print('Successful!')
         else:
